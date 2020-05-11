@@ -32,7 +32,7 @@ npm install viewerjs --add
 This would install the javascript libary into node_modules into your Angular Application
 
 
-![GitHub Logo](/images/node_modules.png)
+![Angular node_modules folder](/images/node_modules.PNG)
 
 
 Add refence to ```viewer.js``` or ```viewer.min.js``` and ```viewer.css``` or ```viewer.min.js``` to the Application from the node_modules
