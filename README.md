@@ -35,7 +35,7 @@ This would install the javascript library into node_modules into your Angular Ap
 ![Angular node_modules folder](/images/node_modules.PNG)
 
 
-Add refence to ```viewer.js``` or ```viewer.min.js``` and ```viewer.css``` or ```viewer.min.js``` to the Application from the node_modules
+Add refrence to ```viewer.js``` or ```viewer.min.js``` and ```viewer.css``` or ```viewer.min.js``` to the Application from the node_modules
 You can add to _angular.json_ ```"styles"``` and ```"scripts"``` sections
 
 Make sure you add the same to all build types *sections* like _build,test,prod_ etc...
@@ -86,7 +86,7 @@ You can reference any valid _URL_
 ```
 
 Modify the ```yourcomponent.component.ts``` file; in this demo it is project ```xcimageviewer/xcimageviewer.component.ts```
-## Usage
+
 
  - Import ```AfterViewInit, ElementRef, ViewChild, OnDestroy```
 
