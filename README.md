@@ -29,9 +29,11 @@ Create new Angular Application or Open Existing Application
 ```shell
 npm install viewerjs --add
 ```
+This would install the javascript libary into node_modules into your Angular Application
+
+
 ![GitHub Logo](/images/logo.png)
 
-This would install the javascript libary into node_modules into your Angular Application
 
 Add refence to ```viewer.js``` or ```viewer.min.js``` and ```viewer.css``` or ```viewer.min.js``` to the Application from the node_modules
 You can add to _angular.json_ ```"styles"``` and ```"scripts"``` sections
