@@ -29,7 +29,7 @@ Create new Angular Application or Open Existing Application
 ```shell
 npm install viewerjs --add
 ```
-This would install the javascript libary into node_modules into your Angular Application
+This would install the javascript library into node_modules into your Angular Application
 
 ![Angular Project folder](/images/project.PNG)
 ![Angular node_modules folder](/images/node_modules.PNG)
