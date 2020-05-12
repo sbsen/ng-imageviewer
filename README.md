@@ -93,7 +93,7 @@ Modify the ```yourcomponent.component.ts``` file; in this demo it is project ```
 
  - Declare reference to ```Viewer```
 
- - Variable for component class to access ```viewer```
+ - Variable for ```viewer``` inside the Component class
  
  - Implement ```ngAfterViewInit()``` Create viewer 
 
