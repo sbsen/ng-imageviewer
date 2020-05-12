@@ -2,6 +2,7 @@
 Wrapper for viewer.js image viewer for Angular 9
 
 fengyuanchen/viewerjs   <a href="https://github.com/fengyuanchen/viewerjs">viewer.js</a>
+![Javascript Viewer](/images/viewerdemo.PNG)
 
 # Usage
 
