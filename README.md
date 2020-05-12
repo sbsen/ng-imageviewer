@@ -1,5 +1,5 @@
 # ng-imageviewer
-Wrapper for viewerjs.js image viewer for Angular 9
+Wrapper for viewer.js image viewer for Angular 9
 
 fengyuanchen/viewerjs   <a href="https://github.com/fengyuanchen/viewerjs">viewer.js</a>
 
