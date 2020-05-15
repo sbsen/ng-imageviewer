@@ -133,7 +133,7 @@ export class XcimageviewerComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnDestroy() {
-    this.viewer.destroy()
+    this.viewer.destroy();
   }
 }
 
