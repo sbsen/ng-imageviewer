@@ -1,152 +1,73 @@
-# ng-imageviewer
-Wrapper for viewer.js image viewer for Angular 12
+| Status        | Current                          |
+| ------------- | -------------------------------- |
+| Category      | Informational                    |
+| Team          | Supplier & Accounting (xtraCHEF) |
+| Author(s)     | A. Patel, Senthil.SB             |
+| Created Date  | January 2022                     |
+| Modified Date | January 2022                     |
 
-fengyuanchen/viewerjs   <a href="https://github.com/fengyuanchen/viewerjs">viewer.js</a>
-![Javascript Viewer](/images/viewerdemo.PNG)
+# Snapshot Approach for Dashboard
 
-# Usage
+Create Snapshot of data for new Dashboard. Querying the backend MSSQL DB and computing `Aggregate/Compare/Sort` the data will slowdown the dashboard screen loading time. Building predefined `Snapshot` and storing in the AWS DynamoDB and fetching the same will enhance user experience of the dashboard screen.
 
-Clone the Repository 
+### sa-snapshot-master DynamoDB Table
 
-Intstall the node_modules 
-
-```shell
-npm install
-```
-To Run the Demo
-
-```shell
-ng serve -o
-```
-
-
-
-## Getting started
-
-Create new Angular Application or Open Existing Application
-
-### Installation
-
-```shell
-npm install viewerjs --add
-```
-This would install the javascript library into node_modules into your Angular Application
-
-![Angular Project folder](/images/project.PNG)
-![Angular node_modules folder](/images/node_modules.PNG)
-
-
-Add refrence to ```viewer.js``` or ```viewer.min.js``` and ```viewer.css``` or ```viewer.min.js``` to the Application from the node_modules
-You can add to _angular.json_ ```"styles"``` and ```"scripts"``` sections
-
-Make sure you add the same to all build types *sections* like _build,test,prod_ etc...
-
-
- ```json
-         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/xc-imageviewer",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
-            "aot": true,
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css",
-              "./node_modules/viewerjs/dist/viewer.min.css"
-            ],
-            "scripts": [
-              "./node_modules/viewerjs/dist/viewer.min.js"
-            ]
-          },
-```
-
-Modify the ```yourcomponent.component.html``` file; in this demo project it is```xcimageviewer/xcimageviewer.component.html```
-
-Add #_keyword_ before the ```div``` to refenece it from the ```xcimageviewer/xcimageviewer.component.ts```
-
-The ```image``` and ```thumbnail``` are fetched from  ```assets/images``` folder in this Angular Application.
-
-You can reference any valid _URL_
-
-```html
-<div class="docs-galley mb-3" style="width: 800px; height: 600px;">
-    <div id="galley" #galley style="visibility: hidden">
-      <ul class="pictures">
-        <li><img data-original="../assets/images/tibet-1.jpg" src="../assets/images/thumbnails/tibet-1.jpg" alt="Cuo Na Lake"></li>
-        <li><img data-original="../assets/images/tibet-2.jpg" src="../assets/images/thumbnails/tibet-2.jpg" alt="Tibetan Plateau"></li>
-        <li><img data-original="../assets/images/tibet-3.jpg" src="../assets/images/thumbnails/tibet-3.jpg" alt="Jokhang Temple"></li>
-      </ul>
-    </div>
-</div>
-```
-
-Modify the ```yourcomponent.component.ts``` file; in this demo it is project ```xcimageviewer/xcimageviewer.component.ts```
-
-
- - Import ```AfterViewInit, ElementRef, ViewChild, OnDestroy```
-
- - Declare reference to ```Viewer```
-
- - Variable for ```viewer``` inside the Component class
- 
- - Implement ```ngAfterViewInit()``` Create viewer 
-
- - Implement ```ngOnDestroy()``` Destroy viewer
-
- 
- ```ts
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-
-// Reference to JS Viewer
-declare var Viewer: any;
-
-@Component({
-  selector: 'app-xcimageviewer',
-  templateUrl: './xcimageviewer.component.html',
-  styleUrls: ['./xcimageviewer.component.css']
-})
-export class XcimageviewerComponent implements OnInit, AfterViewInit, OnDestroy {
-  // variable for viewer
-  viewer: any;
-  // DOM element reference
-  @ViewChild('galley') galley: ElementRef;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(){
-    // console.log(this.galley.nativeElement.innerHTML);
-    this.viewer = new Viewer(this.galley.nativeElement, {
-      inline: true,
-      url: 'data-original',
-    });
-
-    this.viewer.show();
-  }
-
-  ngOnDestroy() {
-    this.viewer.destroy();
-  }
+```json
+{
+  "guid": "",
+  "Name": "PRICE_TRACKER | FOOD_COST",
+  "dailyMaxCount": 2,
+  "createdOn": "yyyymmdd",
+  "timeBase": true,
+  "timeArray": [1000, 2100],
+  "active": true
 }
-
 ```
-## Browser support
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Opera (latest)
-- Edge (latest)
-- Internet Explorer 9+
+### Daily Snapshot Tracker Service
 
-## License
+Runs daily once and creates the list of all the Tenant Active Locations requires snapshots `PRICE_TRACKER | FOOD_COST` and populates the _sa-snapshot-location-tracker_ table.
 
-[MIT](https://opensource.org/licenses/MIT)
+### sa-snapshot-location-tracker DynamoDB Table
+
+```json
+{
+  "guid": "",
+  "name": "PRICE_TRACKER | FOOD_COST",
+  "tenantGuid": "",
+  "locationGuid": "",
+  "dailyCount": 0,
+  "date": "yyyymmdd",
+  "createdOn": "yyyy-mm-ddThh:mm:ss.ffff",
+  "lastSnapshotOn": "yyyy-mm-ddThh:mm:ss.ffff",
+  "active": true,
+  "error": ""
+}
+```
+
+### Snapshot Stager Service
+
+Runs on regular interval checks between ```sa-snapshot-master``` and ```sa-snapshot-location-tracker``` tables
+
+    active=true and dailyCount < dailyMaxCount
+    timeBase=true and time >= timeArray[dailyCount]
+
+Add the message to respective SQS queues `PRICE_TRACKER and FOOD_COST`
+
+### Snapshot Builder Service
+
+Polls the queue on the regular interval of time dequeue the message and creates the snapshots required for `PriceTracker and FoodCost`
+
+Checks for the below `PriceTracker and FoodCost` snapshots are present and creates the missing snapshot for the location.
+
+    #To do define Current Month#
+    Today,Today-1,Today-7,Today-14, CurrentMonth,CurrentMonth-1,CurrentMonth-2,CurrentMonth-3
+
+On successful completion
+
+    dailyCount++
+    lastSnapshotOn=CurrentDateTime
+
+On Exception
+
+    error=exception message
